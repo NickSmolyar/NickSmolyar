@@ -1,0 +1,21 @@
+import pytest
+import pymysql
+
+
+@pytest.fixture
+def clean_test_users():
+    """Fixture to clean up test users from database after test."""
+    yield
+    connection = pymysql.connect(
+        host="localhost",
+        port=3307,
+        user="user",
+        password="password",
+        database="opencart"
+    )
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("DELETE FROM oc_customer WHERE email LIKE 'testuser_%@example.com'")
+            connection.commit()
+    finally:
+        connection.close()
